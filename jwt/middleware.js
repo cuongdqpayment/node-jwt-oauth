@@ -26,6 +26,8 @@ var RSAKeyObj; //bien public de su dung
 
 var tokenSign = (req) => {
   let signTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+    console.log('Sign secret:');
+    console.log(config.secret + req.ip + req.headers["user-agent"] + signTime);
   if (req.user&&req.user.USERNAME){
     //truong hop nay neu luu session? hoac luu db?
     let tokenSign = jwt.sign({
@@ -35,7 +37,7 @@ var tokenSign = (req) => {
                     req_ip: req.ip, //chi duoc cap cho ip nay
                     req_time: signTime
                   },
-                    (config.secret)// + req.ip + req.headers["user-agent"] + signTime)
+                    (config.secret + req.ip + req.headers["user-agent"] + signTime)
                     , {
                       expiresIn: '24h' // expires in 24 hours
                     }
@@ -66,8 +68,8 @@ var verifyToken=(req,res)=>{
       token = token.slice(7, token.length);
     }
     var tokenObj = jwt.decode(token);
-    console.log('tokenObj:');
-    console.log(tokenObj);
+    console.log('Verify secret:');
+    console.log(config.secret + req.ip + req.headers["user-agent"] + (tokenObj?tokenObj.req_time:''));
     return jwt.verify(token
       , (config.secret + req.ip + req.headers["user-agent"] + (tokenObj?tokenObj.req_time:''))
       , (err, decoded) => {
