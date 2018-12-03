@@ -104,6 +104,7 @@ class HandlerGenerator {
     if (verifyToken(req,res)){
       next();
     }else{
+      res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({
         success: false,
         message: 'Auth token is not supplied'
@@ -129,12 +130,14 @@ class HandlerGenerator {
       }else{
         //cho phep chi can co token khong can dung
         //lay anh xem
+        res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({
           success: false,
           message: 'Auth token is invalid!'
         }));
       }
     }else{
+      res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({
         success: false,
         message: 'Auth token is not supplied'
@@ -165,6 +168,7 @@ class HandlerGenerator {
         if (verifyToken(req,res)){
           next();
         }else{
+          res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({
             success: false,
             message: 'Auth token is not supplied'
@@ -172,6 +176,7 @@ class HandlerGenerator {
         }
       } else {
         //khong truyen
+        res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
         return res.end(JSON.stringify({
           success: false,
           message: 'Auth token is not supplied ANY!'
@@ -187,6 +192,7 @@ class HandlerGenerator {
       let token;
       let userSave={};
       if (err) {
+        res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify(err));
       } else {
         for (let key in fields) {
@@ -230,6 +236,7 @@ class HandlerGenerator {
         }else{
           //tra ve web bao loi va ket thuc
           console.log('Token FormData Post Invalid!');
+          res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({
             success: false,
             message: 'Auth token is not valid'
@@ -237,6 +244,7 @@ class HandlerGenerator {
         };
       } else {
         //khong truyen
+         res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
          res.end(JSON.stringify({
           success: false,
           message: 'Auth token is not supplied ANY!'
@@ -255,7 +263,11 @@ class HandlerGenerator {
       let password = '';
 
       if (err) {
-        next();
+        res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({
+          success: false,
+          message: err
+        }));
       } else {
         for (let key in fields) {
           if (key = 'username') username = fields[key];
