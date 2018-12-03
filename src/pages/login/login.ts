@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController,LoadingController,ToastController } from 'ionic-angular';
+import { NavController,LoadingController,AlertController,ToastController } from 'ionic-angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { RegisterPage } from '../register/register';
 import { SettingPage } from '../setting/setting';
@@ -20,7 +20,7 @@ export class LoginPage {
   
   constructor(public navCtrl: NavController,
               private formBuilder: FormBuilder,
-              //private alertCtrl: AlertController,
+              private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
               private toastCtrl: ToastController,
               private apiService: ApiAuthService) { }
@@ -70,11 +70,12 @@ export class LoginPage {
     .then(token=>{
       if (token){
         loading.dismiss();
-          this.toastCtrl.create({
-            message:"result: " + JSON.stringify(token),
-            duration: 1000,
-            position: 'middle'
-          }).present();
+          
+      this.alertCtrl.create({
+          title: 'Login success',
+          subTitle: 'Welcome to system!',
+          buttons: ['OK']
+        }).present();
         
         //console.log(this.apiService.getUserInfo());
         this.serverTokenUserInfo = this.apiService.getUserInfo();
@@ -114,16 +115,11 @@ export class LoginPage {
     this.apiService.getEdit()
     .then(user=>{
       //console.log(this.apiService.getUserInfoSetting());
-      this.toastCtrl.create({
-        message:"result: " + JSON.stringify(this.apiService.getUserInfoSetting()),
-        duration: 1000,
-        position: 'middle'
-      }).present();
-
       this.navCtrl.push(SettingPage);
       //dong lai menu neu no dang mo
     })
     .catch(err=>{
+      
       this.toastCtrl.create({
         message:"err get API: : " + JSON.stringify(err),
         duration: 5000,

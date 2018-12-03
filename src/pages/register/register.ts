@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController, LoadingController } from 'ionic-angular';
+import { NavController, ToastController, AlertController, LoadingController } from 'ionic-angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ApiAuthService } from '../../services/apiAuthService';
 import { LoginPage } from '../login/login';
@@ -18,6 +18,7 @@ export class RegisterPage {
   constructor(
     private navCtrl: NavController,
     private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private formBuilder: FormBuilder,
     private apiService: ApiAuthService) { }
@@ -55,11 +56,13 @@ export class RegisterPage {
     this.apiService.register(formData)
     .then(data=>{
         loading.dismiss();
-        this.toastCtrl.create({
-          message:"result: " + JSON.stringify(data),
-          duration: 1000,
-          position: 'middle'
+        
+        this.alertCtrl.create({
+          title: 'Register status',
+          subTitle: 'You were register successfule, Welcome to system!',
+          buttons: ['OK']
         }).present();
+        
         this.navCtrl.setRoot(LoginPage);
       })
     .catch(err=>{

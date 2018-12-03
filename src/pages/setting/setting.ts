@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController, LoadingController } from 'ionic-angular';
+import { NavController, ToastController, AlertController, LoadingController } from 'ionic-angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ApiAuthService } from '../../services/apiAuthService';
 import { LoginPage } from '../login/login';
@@ -21,6 +21,7 @@ export class SettingPage {
   constructor(
     private navCtrl: NavController,
     private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private formBuilder: FormBuilder,
     private apiImageService: ApiImageService,
@@ -32,12 +33,6 @@ export class SettingPage {
       .catch(err => console.log(err));
 
     this.userInfo = this.apiService.getUserInfoSetting()
-
-    this.toastCtrl.create({
-      message: "getUserInfoSetting: " + JSON.stringify(this.userInfo),
-      duration: 1000,
-      position: 'top'
-    }).present();
 
     this.myFromGroup = this.formBuilder.group({
       DISPLAY_NAME: (this.userInfo) ? this.userInfo.DISPLAY_NAME : '',
@@ -105,11 +100,13 @@ export class SettingPage {
     this.apiService.editUser(formData)
       .then(data => {
         loading.dismiss();
-        this.toastCtrl.create({
-          message: "result: " + JSON.stringify(data),
-          duration: 1000,
-          position: 'middle'
+        
+        this.alertCtrl.create({
+          title: 'Save your setting successful!',
+          subTitle: 'Welcome to system!',
+          buttons: ['OK']
         }).present();
+        
         //quay tro lai trang chu roi nhe
         this.navCtrl.setRoot(LoginPage);
 

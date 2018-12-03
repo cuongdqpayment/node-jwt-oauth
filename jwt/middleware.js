@@ -11,7 +11,7 @@ if (!fs.existsSync(dirUpload)) {
 
 const request = require('request');
 //khai bao csdl
-const databaseService = require('../db/database-service');
+const databaseService = require('../db/sqlite/database-service');
 //tao bang du lieu luu tru
 databaseService.HandleDatabase.init();
 
