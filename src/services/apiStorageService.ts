@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { SESSION_STORAGE, StorageService, isStorageAvailable } from 'angular-webstorage-service';
+import { LOCAL_STORAGE, StorageService, isStorageAvailable } from 'angular-webstorage-service';
  
 const STORAGE_KEY = 'Cng@3500888';
 const sessionStorageAvailable = isStorageAvailable(sessionStorage); 
@@ -7,7 +7,7 @@ const sessionStorageAvailable = isStorageAvailable(sessionStorage);
 @Injectable()
 export class ApiStorageService {
  
-    constructor(@Inject(SESSION_STORAGE) private storage: StorageService) {
+    constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
     }
  
     public doSomethingAwesome(): number {

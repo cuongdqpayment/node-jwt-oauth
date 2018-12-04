@@ -26,18 +26,30 @@ var RSAKeyObj; //bien public de su dung
 
 var tokenSign = (req) => {
   let signTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+  let clientIp= req.ip; //day la dia chi noi
+  //tim dia chi WAN nhu sau:
+    if (req.headers["client_ip"]){
+      clientIp=req.headers["client_ip"];
+    }else if (req.headers["x-real-ip"]){
+      clientIp=req.headers["x-real-ip"];
+    }else if (req.headers["x-forwarded-for"]){
+      clientIp=req.headers["x-forwarded-for"];
+    }else if (req.headers["remote_add"]){
+      clientIp=req.headers["remote_add"];
+    }
+  
     console.log('Sign secret:');
-    console.log(config.secret + req.ip + req.headers["user-agent"] + signTime);
+    console.log(config.secret + clientIp + req.headers["user-agent"] + signTime);
   if (req.user&&req.user.USERNAME){
     //truong hop nay neu luu session? hoac luu db?
     let tokenSign = jwt.sign({
                     username: req.user.USERNAME,
                     nickname: (req.user.DISPLAY_NAME)?req.user.DISPLAY_NAME:'',
                     image: (req.user.URL_IMAGE)?req.user.URL_IMAGE:'',//, //thong tin anh cua nguoi su dung
-                    req_ip: req.ip, //chi duoc cap cho ip nay
+                    req_ip: clientIp, //chi duoc cap cho ip nay
                     req_time: signTime
                   },
-                    (config.secret /* + req.ip */ + req.headers["user-agent"] + signTime)
+                    (config.secret /* + clientIp */ + req.headers["user-agent"] + signTime)
                     , {
                       expiresIn: '24h' // expires in 24 hours
                     }
@@ -49,10 +61,10 @@ var tokenSign = (req) => {
   }else{
     return jwt.sign({
       req_device:req.headers["user-agent"],
-      req_ip: req.ip,
+      req_ip: clientIp,
       req_time: signTime
     },
-      (config.secret /* + req.ip */ + req.headers["user-agent"] + signTime)
+      (config.secret /* + clientIp */ + req.headers["user-agent"] + signTime)
       , {
         expiresIn: '24h' // expires in 24 hours
       }
@@ -68,10 +80,21 @@ var verifyToken=(req,res)=>{
       token = token.slice(7, token.length);
     }
     var tokenObj = jwt.decode(token);
+    let clientIp= req.ip; //day la dia chi noi
+  //tim dia chi WAN nhu sau:
+    if (req.headers["client_ip"]){
+      clientIp=req.headers["client_ip"];
+    }else if (req.headers["x-real-ip"]){
+      clientIp=req.headers["x-real-ip"];
+    }else if (req.headers["x-forwarded-for"]){
+      clientIp=req.headers["x-forwarded-for"];
+    }else if (req.headers["remote_add"]){
+      clientIp=req.headers["remote_add"];
+    }
     console.log('Verify secret:');
-    console.log(config.secret + req.ip + req.headers["user-agent"] + (tokenObj?tokenObj.req_time:''));
+    console.log(config.secret + clientIp + req.headers["user-agent"] + (tokenObj?tokenObj.req_time:''));
     return jwt.verify(token
-      , (config.secret /* + req.ip */ + req.headers["user-agent"] + (tokenObj?tokenObj.req_time:''))
+      , (config.secret /* + clientIp */ + req.headers["user-agent"] + (tokenObj?tokenObj.req_time:''))
       , (err, decoded) => {
         if (err) {
           return false;
@@ -294,7 +317,7 @@ class HandlerGenerator {
       var userInfo = {
         username: username
         ,password: decryptedPassSign
-        ,ip: req.ip
+        ,ip: clientIp
         /* ,nickname: 'cuong.dq'
         ,fullname: 'Đoàn Quốc Cường'
         ,urlImage: 'http://abc.jsp/anhcanhan.jsp'
