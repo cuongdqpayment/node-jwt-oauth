@@ -29,10 +29,15 @@ export class LoginPage {
 
   ngOnInit() {
 
-    console.log(
-      this.apiStorageService.doSomethingAwesome()
-
-    ) ;
+    //truong hop da luu duoc token login truoc do thi
+    //lay ra va push cho ApiAuthService  
+    if (this.apiStorageService.getToken()){
+      //dam bao lenh nay se nhu lenh login thanh cong
+      //console.log('tokenSave: ',this.apiStorageService.getToken());
+      this.apiService.pushToken(this.apiStorageService.getToken());
+    }else{
+      //console.log('no Token saved!')
+    }
 
     this.apiService.getServerPublicRSAKey()
     .then(pk=>{
@@ -42,6 +47,10 @@ export class LoginPage {
         //va user info neu co
         this.serverTokenUserInfo = this.apiService.getUserInfo();
         //neu thong tin nguoi dung co thi hien thi user, va logout
+        //console.log(this.serverTokenUserInfo);
+        if (this.serverTokenUserInfo){
+          this.isShowInfo=true; //da login truoc do roi nhe
+        }
 
     })
     .catch(err=>console.log(err));
@@ -88,6 +97,8 @@ export class LoginPage {
         this.serverTokenUserInfo = this.apiService.getUserInfo();
         this.isShowInfo=true;
         //this.navCtrl.setRoot(LoginPage);
+        //saveToken de su dung lan sau
+        this.apiStorageService.saveToken(token);
 
       }else{
         throw {code:403,message:'No token'}
@@ -111,9 +122,16 @@ export class LoginPage {
   }
 
   callLogout(){
-    this.apiService.logout();
-    this.isShowInfo=false;
-    this.navCtrl.setRoot(LoginPage);
+    this.apiStorageService.deleteToken();
+    this.apiService.logout()
+    .then(data=>{
+      this.isShowInfo=false;
+      this.navCtrl.setRoot(LoginPage);
+    })
+    .catch(err=>{
+      console.log(err);
+    });
+    //xoa token da luu tru truoc do
   }
 
   callEdit(){

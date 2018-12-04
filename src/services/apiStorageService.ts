@@ -8,13 +8,39 @@ const sessionStorageAvailable = isStorageAvailable(sessionStorage);
 export class ApiStorageService {
  
     constructor(@Inject(SESSION_STORAGE) private storage: StorageService) {
-        console.log(`Session storage available: ${sessionStorageAvailable}`);
     }
  
     public doSomethingAwesome(): number {
         const awesomenessLevel: number = this.storage.get(STORAGE_KEY) || 1337;
         this.storage.set(STORAGE_KEY, awesomenessLevel + 1);
         return awesomenessLevel;
+    }
+
+    save(key,value){
+        this.storage.set(key, value);
+    }
+    read(key){
+        return this.storage.get(key);
+    }
+
+    delete(key){
+        this.storage.remove(key);
+    }
+
+    getStatus(){
+        return `Session storage available: ${sessionStorageAvailable}`;
+    }
+
+    saveToken(value){
+        this.save('token',value);
+    }
+
+    getToken(){
+       return this.read('token');
+    }
+
+    deleteToken(){
+        this.delete('token');
     }
 
 }

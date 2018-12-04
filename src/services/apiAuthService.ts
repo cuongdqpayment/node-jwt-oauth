@@ -55,11 +55,17 @@ export class ApiAuthService {
 
     login(formData) {
         return this.httpClient.post(this.authenticationServer + '/login', formData)
-            .toPromise()
+            .toPromise() //chuyen doi 200 -> then #200->catch
             .then(data => {
+                //neu tra ve status=200 thi o day
                 this.userToken = data;
                 return this.userToken.token;
-            });
+            }); //cac trang thai 403,404 thi se ve catch
+    }
+
+    pushToken(token){
+        //gan token cho user de xem nhu da login
+        this.userToken={token:token};
     }
 
     logout() {
@@ -152,6 +158,7 @@ export class ApiAuthService {
                 //console.log(this.userInfo.image);
             }
         } catch (err) {
+            this.userInfo = null;
         }
         return this.userInfo;
     }
