@@ -56,6 +56,7 @@ export class ApiService {
     const signedPrivateKey = this.clientKey.sign(JSON.stringify(objClient), 'base64');
     console.log('signedPrivateKey: '+ signedPrivateKey);
 
+    //dung public_key de chung thuc chu ky kem van ban co dung khong?
     const verifyPublicKey = this.midleKey.verify(JSON.stringify(objClient), signedPrivateKey, 'utf8', 'base64');
     console.log('verifyPublicKey: ' + verifyPublicKey);
 

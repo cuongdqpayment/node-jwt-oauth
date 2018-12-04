@@ -25,6 +25,7 @@
     "@ionic-native/status-bar": "~4.17.0",
     "@ionic/app-scripts": "^3.1.6",
     "@ionic/storage": "2.2.0",
+    "angular-webstorage-service": "^1.0.2",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.2",

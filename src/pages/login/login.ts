@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { RegisterPage } from '../register/register';
 import { SettingPage } from '../setting/setting';
 import { ApiAuthService } from '../../services/apiAuthService';
+import { ApiStorageService } from '../../services/apiStorageService';
 
 @Component({
   selector: 'page-login',
@@ -23,9 +24,15 @@ export class LoginPage {
               private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
               private toastCtrl: ToastController,
+              private apiStorageService: ApiStorageService,
               private apiService: ApiAuthService) { }
 
   ngOnInit() {
+
+    console.log(
+      this.apiStorageService.doSomethingAwesome()
+
+    ) ;
 
     this.apiService.getServerPublicRSAKey()
     .then(pk=>{

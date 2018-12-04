@@ -5,6 +5,10 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { HttpClientModule } from '@angular/common/http';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+
+import { StorageServiceModule } from 'angular-webstorage-service';
+import { ApiStorageService } from '../services/apiStorageService';
+
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
@@ -27,6 +31,7 @@ import { ApiImageService } from '../services/apiImageService';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    StorageServiceModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
@@ -43,6 +48,7 @@ import { ApiImageService } from '../services/apiImageService';
     ApiService,
     ApiAuthService,
     ApiImageService,
+    ApiStorageService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
