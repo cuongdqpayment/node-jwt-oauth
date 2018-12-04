@@ -3,7 +3,8 @@ import { NavController, ToastController, AlertController, LoadingController } fr
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ApiAuthService } from '../../services/apiAuthService';
 import { LoginPage } from '../login/login';
-import { ApiImageService } from '../../services/apiImageService'
+import { ApiImageService } from '../../services/apiImageService';
+import { ApiStorageService } from '../../services/apiStorageService';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class SettingPage {
     private toastCtrl: ToastController,
     private formBuilder: FormBuilder,
     private apiImageService: ApiImageService,
+    private apiStorageService: ApiStorageService,
     private apiService: ApiAuthService) { }
 
   ngOnInit() {
@@ -107,9 +109,18 @@ export class SettingPage {
           buttons: ['OK']
         }).present();
         
-        //quay tro lai trang chu roi nhe
-        this.navCtrl.setRoot(LoginPage);
+        //xoa token
+        this.apiStorageService.deleteToken();
+        this.apiService.logout()
+        .then(data=>{
+          
+          this.navCtrl.setRoot(LoginPage);
+        })
+        .catch(err=>{
+          console.log(err);
+        });
 
+       
       })
       .catch(err => {
         loading.dismiss();
