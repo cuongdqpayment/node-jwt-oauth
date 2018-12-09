@@ -23,6 +23,75 @@ var RSAKeyRow;
 class HandleDatabase {
     //khoi tao cac bang luu so lieu
     init(){
+        //tao bang chua speedtest_server
+    
+        let createSpeedtestServerTable ={
+            name: 'SPEEDTEST_SERVERS',
+            cols: [
+                {
+                    name: 'SERVER_URL',
+                    type: dataType.text,
+                    option_key: 'PRIMARY KEY NOT NULL',
+                    description: 'Chuỗi link chính của máy chủ không dấu / cuối ex. http://210.245.119.136:9235'
+                },
+                {
+                    name: 'NAME',
+                    type: dataType.text,
+                    option_key: 'NOT NULL',
+                    description: 'Đặt tên cho máy chủ, hiển thị và là duy nhất'
+                },
+                {
+                    name: 'GET_IP',
+                    type: dataType.text,
+                    option_key: 'NOT NULL',
+                    description: 'Đường dẫn lấy địa chỉ IP ex. /getIP.php?isp=true&distance=km'
+                },
+                {
+                    name: 'PING',
+                    type: dataType.text,
+                    option_key: 'NOT NULL',
+                    description: 'Đường dẫn Ping ex. /empty.php'
+                },
+                {
+                    name: 'UPLOAD',
+                    type: dataType.text,
+                    option_key: 'NOT NULL',
+                    description: 'Đường dẫn Upload ex. /empty.php'
+                },
+                {
+                    name: 'DOWNLOAD',
+                    type: dataType.text,
+                    option_key: 'NOT NULL',
+                    description: 'Đường dẫn Download ex. /garbage.php?ckSize=20'
+                },
+                {
+                    name: 'DESCRITPTION',
+                    type: dataType.text,
+                    option_key: '',
+                    description: 'Mô tả ghi chú máy chủ này'
+                },
+                {
+                    name: 'LOCATION',
+                    type: dataType.text,
+                    option_key: '',
+                    description: 'Tọa độ của máy chủ loc(latitude,longitude)'
+                },
+                {
+                    name: 'IS_ACTIVE',
+                    type: dataType.numeric,
+                    option_key: 'default 1, unique(NAME)',
+                    description: 'Trạng thái dịch vụ, đặt tên duy nhất http cũng duy nhất '
+                }
+            ]
+        };
+        
+        db.createTable(createSpeedtestServerTable).then(data=>{ 
+            if (!isSilence) console.log(data);
+            //tao xong db, khởi tạo các máy chủ default cuong.dq
+            this.createDefaultSpeedTestServer()
+            .then(data=>{})
+            .catch(err=>{})
+        });
         //tao bang chua key
         //bang du lieu luu RSA cua server
         let createServerRSAKeyTable ={
@@ -563,6 +632,172 @@ class HandleDatabase {
                 });
             }
         })
+    }
+
+    //tao speedtest server
+    createDefaultSpeedTestServer(){
+     var serverObj = { 
+            name: 'amazone-heroku-usa',
+            url: 'https://cuongdq-speedtest.herokuapp.com', //ngoai internet
+            getip : '/speedtest/get-ip',
+            ping: '/speedtest/empty',
+            download: '/speedtest/download',
+            upload: '/speedtest/empty',
+            description:' Máy chủ test internet Tại Mỹ, herokuapp.com',
+            location:'30.0866,-94.1274' 
+        }
+        
+        return this.createSpeedtestServer(serverObj)
+        .then(data=>{
+            console.log(data);
+            serverObj = {
+                name: 'c3-internet',
+                url: 'http://210.245.119.136:9235', //ngoai internet
+                getip : '/getIP.php?isp=true&distance=km',
+                ping: '/empty.php',
+                download: '/garbage.php?ckSize=20',
+                upload: '/empty.php',
+                description:'',
+                location:'16.00,108.00'
+            }
+            return this.createSpeedtestServer(serverObj)
+            .then(data=>{
+                serverObj = {
+                    name: 'c3-intranet-dn-vn',
+                    url: 'http://10.151.54.84:9235', //ngoai internet
+                    getip : '/getIP.php?isp=true&distance=km',
+                    ping: '/empty.php',
+                    download: '/garbage.php?ckSize=20',
+                    upload: '/empty.php',
+                    description:'Máy chủ test mạng nội bộ Công ty 3 tại Đà nẵng',
+                    location:'16.00,108.00' 
+                }
+                return this.createSpeedtestServer(serverObj)
+            })
+        }) 
+    }
+    createSpeedtestServer(serverObj){
+        var serverSQL={
+                name: 'SPEEDTEST_SERVERS',
+                cols: [
+                    {
+                        name: 'SERVER_URL',
+                        value: serverObj.url
+                    },
+                    {
+                        name: 'NAME',
+                        value: serverObj.name
+                    },
+                    {
+                        name: 'GET_IP',
+                        value: serverObj.getip
+                    },
+                    {
+                        name: 'PING',
+                        value: serverObj.ping
+                    },
+                    {
+                        name: 'UPLOAD',
+                        value: serverObj.upload
+                    },
+                    {
+                        name: 'DOWNLOAD',
+                        value: serverObj.download
+                    },
+                    {
+                        name: 'DESCRITPTION',
+                        value: serverObj.description
+                    },
+                    {
+                        name: 'LOCATION',
+                        value: serverObj.location
+                    }
+                ]
+        }
+        return db.insert(serverSQL)
+        .then(data => {
+          if (!isSilence) console.log(data);
+          return true; //excuted du lieu thanh cong
+          }
+        ) 
+    }
+
+    //get speedtest server 
+    getSpeedtestServerList(){
+        var speedtestTable ={
+            name: 'SPEEDTEST_SERVERS',
+            cols: [
+                {
+                    name: 'SERVER_URL'
+                },
+                {
+                    name: 'NAME'
+                },
+                {
+                    name: 'GET_IP'
+                },
+                {
+                    name: 'PING'
+                },
+                {
+                    name: 'UPLOAD'
+                },
+                {
+                    name: 'DOWNLOAD'
+                },
+                {
+                    name: 'DESCRITPTION'
+                },
+                {
+                    name: 'LOCATION'
+                }
+            ]
+        };
+        
+        return db.selectAll(speedtestTable)
+        
+    }
+
+    //
+    getSpeedtestServerName(name){
+        var speedtestTable ={
+            name: 'SPEEDTEST_SERVERS',
+            cols: [
+                {
+                    name: 'SERVER_URL'
+                },
+                {
+                    name: 'NAME'
+                },
+                {
+                    name: 'GET_IP'
+                },
+                {
+                    name: 'PING'
+                },
+                {
+                    name: 'UPLOAD'
+                },
+                {
+                    name: 'DOWNLOAD'
+                },
+                {
+                    name: 'DESCRITPTION'
+                },
+                {
+                    name: 'LOCATION'
+                }
+            ],
+            wheres: [
+                {
+                    name: 'NAME',
+                    value: name
+                }
+                    ]
+        };
+
+        return db.select(speedtestTable)
+        
     }
 
     //dua key object vao

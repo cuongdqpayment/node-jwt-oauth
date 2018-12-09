@@ -53,6 +53,7 @@ function main(isHttp, isHttps) {
 
   //Tra khoa public cho client
   app.get('/key-json', handlers.getPublickeyJson);
+  app.get('/speedtest-server', handlers.getSpeedtestServer);
   
   //Tra bo khoa RSA cho admin xu ly, chi co quyen admin moi su dung duoc
   app.get('/admin-json', handlers.checkRoles, handlers.getRSAKeyObj);

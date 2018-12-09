@@ -171,7 +171,7 @@ class AppDAO {
    * @param {*} selectTable 
    */
   select(selectTable) {
-    let sql = 'SELECT * FROM ' + selectTable.name;
+    let sql;
     let i = 0;
     let params = [];
     let sqlNames='';
@@ -184,20 +184,56 @@ class AppDAO {
     }
     sql = 'SELECT '+sqlNames+' FROM ' + selectTable.name;
     i = 0;
-    for (let col of selectTable.wheres) {
-      if (col.value){
-        params.push(col.value);
-        if (i++ == 0) {
-          sql += ' WHERE ' + col.name + '= ?';
-        } else {
-          sql += ' AND ' + col.name + '= ?';
+    if (selectTable.wheres){
+      for (let col of selectTable.wheres) {
+        if (col.value){
+          params.push(col.value);
+          if (i++ == 0) {
+            sql += ' WHERE ' + col.name + '= ?';
+          } else {
+            sql += ' AND ' + col.name + '= ?';
+          }
         }
       }
     }
-    //console.log(sql);
-    //console.log(params);
+
     return this.getRst(sql, params)
   }
+
+  /**
+   * 
+   * @param {*} selectTable 
+   */
+  selectAll(selectTable) {
+
+    let sql='';
+    let i = 0;
+    let params = [];
+    let sqlNames='';
+    for (let col of selectTable.cols) {
+      if (i++ == 0) {
+        sqlNames += col.name;
+      } else {
+        sqlNames += ', ' + col.name;
+      }
+    }
+    sql = 'SELECT '+sqlNames+' FROM ' + selectTable.name;
+    i = 0;
+    if (selectTable.wheres){
+      for (let col of selectTable.wheres) {
+        if (col.value){
+          params.push(col.value);
+          if (i++ == 0) {
+            sql += ' WHERE ' + col.name + '= ?';
+          } else {
+            sql += ' AND ' + col.name + '= ?';
+          }
+        }
+      }
+    }
+    return this.getRsts(sql, params)
+  }
+
   //lay 1 bang ghi dau tien cua select
   /**
    * lay 1 bang ghi

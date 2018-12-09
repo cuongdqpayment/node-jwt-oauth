@@ -469,6 +469,19 @@ class HandlerGenerator {
     res.end(JSON.stringify(RSAKeyObj));
   }
 
+  getSpeedtestServer(req,res,next){
+    databaseService.HandleDatabase.getSpeedtestServerList()
+    .then(data=>{
+       
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(data));
+    })
+    .catch(err=>{
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(err));
+    })
+  }
+
   getPublickeyJson(req, res, next) {
     databaseService.HandleDatabase.
       createServiceKey(databaseService.service_id)
@@ -493,10 +506,11 @@ class HandlerGenerator {
 
   cors(req, res, next) {
     res.header("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-    res.header('Access-Control-Allow-Origin', 'http://localhost:9235');
-    res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
+    //res.header('Access-Control-Allow-Origin', 'http://localhost:9235');
+    //res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
+    //res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
     //muon cho phep truy cap tu server nao thi reply cac website tuong ung
-    //res.header("Access-Control-Allow-Origin", "*"); //khai bao chap nhan tat ca de test
+    res.header("Access-Control-Allow-Origin", "*"); //khai bao chap nhan tat ca de test
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Credentials", true);
     next();
