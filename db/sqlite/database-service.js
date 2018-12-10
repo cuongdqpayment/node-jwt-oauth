@@ -637,7 +637,7 @@ class HandleDatabase {
     //tao speedtest server
     createDefaultSpeedTestServer(){
      var serverObj = { 
-            name: 'amazone-heroku-usa',
+            name: 'Amazone Heroku (USA)',
             url: 'https://cuongdq-speedtest.herokuapp.com', //ngoai internet
             getip : '/speedtest/get-ip',
             ping: '/speedtest/empty',
@@ -651,7 +651,7 @@ class HandleDatabase {
         .then(data=>{
             console.log(data);
             serverObj = {
-                name: 'c3-internet',
+                name: 'Fpt Danang (100Mbps)',
                 url: 'http://210.245.119.136:9235', //ngoai internet
                 getip : '/getIP.php?isp=true&distance=km',
                 ping: '/empty.php',
@@ -662,18 +662,32 @@ class HandleDatabase {
             }
             return this.createSpeedtestServer(serverObj)
             .then(data=>{
+                console.log(data);
                 serverObj = {
-                    name: 'c3-intranet-dn-vn',
-                    url: 'http://10.151.54.84:9235', //ngoai internet
-                    getip : '/getIP.php?isp=true&distance=km',
-                    ping: '/empty.php',
-                    download: '/garbage.php?ckSize=20',
-                    upload: '/empty.php',
-                    description:'Máy chủ test mạng nội bộ Công ty 3 tại Đà nẵng',
-                    location:'16.00,108.00' 
+                    name: 'Cmc Danang (100Mbps)',
+                    url: 'https://c3.mobifone.vn', //ngoai internet
+                    getip : '/speedtest/get-ip.jsp',
+                    ping: '/speedtest/latency.txt',
+                    download: '/speedtest/random1000x1000.jpg',
+                    upload: '/speedtest/upload.jsp',
+                    description:'Máy chủ test demo speedtest của kola tại Cty3',
+                    location:'16.00,108.00'
                 }
                 return this.createSpeedtestServer(serverObj)
-            })
+                .then(data=>{
+                    serverObj = {
+                        name: 'Intranet (internal)',
+                        url: 'http://10.151.54.84:9235', //ngoai internet
+                        getip : '/getIP.php?isp=true&distance=km',
+                        ping: '/empty.php',
+                        download: '/garbage.php?ckSize=20',
+                        upload: '/empty.php',
+                        description:'Máy chủ test mạng nội bộ Công ty 3 tại Đà nẵng',
+                        location:'16.00,108.00' 
+                    }
+                    return this.createSpeedtestServer(serverObj)
+                })
+            }) 
         }) 
     }
     createSpeedtestServer(serverObj){
