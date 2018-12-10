@@ -278,6 +278,18 @@ class HandlerGenerator {
 
   //register post
   register(req, res, next) {
+    let clientIp= req.ip; //day la dia chi noi
+  //tim dia chi WAN nhu sau:
+    if (req.headers["client_ip"]){
+      clientIp=req.headers["client_ip"];
+    }else if (req.headers["x-real-ip"]){
+      clientIp=req.headers["x-real-ip"];
+    }else if (req.headers["x-forwarded-for"]){
+      clientIp=req.headers["x-forwarded-for"];
+    }else if (req.headers["remote_add"]){
+      clientIp=req.headers["remote_add"];
+    }
+
     const form = new formidable.IncomingForm();
 
     form.parse(req, function (err, fields, files) {
@@ -307,7 +319,7 @@ class HandlerGenerator {
             password: decryptedPassSign //clear password
           }), 'base64');
         } catch (err) {
-          isOKAll = fasle;
+          isOKAll = false;
         }
       } else {
         isOKAll = false;
