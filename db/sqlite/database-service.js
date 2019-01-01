@@ -8,6 +8,7 @@ const NodeRSA = require('node-rsa');
 const AppDAO = require('./lib/sqlite-dao');
 const dataType = require('./lib/sqlite-datatype');
 const config = require('./lib/config');
+const speedtestConfig = require('./speedtest-config');
 const isSilence = config.keep_silence;
 
 const dirDB = 'db';
@@ -88,9 +89,7 @@ class HandleDatabase {
         db.createTable(createSpeedtestServerTable).then(data=>{ 
             if (!isSilence) console.log(data);
             //tao xong db, khởi tạo các máy chủ default cuong.dq
-            this.createDefaultSpeedTestServer()
-            .then(data=>{})
-            .catch(err=>{})
+            this.createDefaultSpeedTestServer();
         });
         //tao bang chua key
         //bang du lieu luu RSA cua server
@@ -636,59 +635,15 @@ class HandleDatabase {
 
     //tao speedtest server
     createDefaultSpeedTestServer(){
-     var serverObj = { 
-            name: 'Amazone Heroku (USA)',
-            url: 'https://cuongdq-speedtest.herokuapp.com', //ngoai internet
-            getip : '/speedtest/get-ip',
-            ping: '/speedtest/empty',
-            download: '/speedtest/download',
-            upload: '/speedtest/empty',
-            description:' Máy chủ test internet Tại Mỹ, herokuapp.com',
-            location:'30.0866,-94.1274' 
-        }
-        
-        return this.createSpeedtestServer(serverObj)
-        .then(data=>{
-            console.log(data);
-            serverObj = {
-                name: 'Fpt Danang (100Mbps)',
-                url: 'http://210.245.119.136:9235', //ngoai internet
-                getip : '/getIP.php?isp=true&distance=km',
-                ping: '/empty.php',
-                download: '/garbage.php?ckSize=20',
-                upload: '/empty.php',
-                description:'',
-                location:'16.00,108.00'
-            }
-            return this.createSpeedtestServer(serverObj)
-            .then(data=>{
-                console.log(data);
-                serverObj = {
-                    name: 'Cmc Danang (100Mbps)',
-                    url: 'https://c3.mobifone.vn', //ngoai internet
-                    getip : '/speedtest/get-ip.jsp',
-                    ping: '/speedtest/latency.txt',
-                    download: '/speedtest/random1000x1000.jpg',
-                    upload: '/speedtest/upload.jsp',
-                    description:'Máy chủ test demo speedtest của kola tại Cty3',
-                    location:'16.00,108.00'
-                }
-                return this.createSpeedtestServer(serverObj)
-                .then(data=>{
-                    serverObj = {
-                        name: 'Intranet (internal)',
-                        url: 'http://10.151.54.84:9235', //ngoai internet
-                        getip : '/getIP.php?isp=true&distance=km',
-                        ping: '/empty.php',
-                        download: '/garbage.php?ckSize=20',
-                        upload: '/empty.php',
-                        description:'Máy chủ test mạng nội bộ Công ty 3 tại Đà nẵng',
-                        location:'16.00,108.00' 
-                    }
-                    return this.createSpeedtestServer(serverObj)
-                })
-            }) 
-        }) 
+        speedtestConfig.forEach((serverObj,index)=>{
+             this.createSpeedtestServer(serverObj)
+                 .then(data=>{
+                    console.log('Create speedtest server OK', data);
+                 })
+                 .catch(err=>{
+                    console.log('Error create Speedtest server',err);
+                 })
+        })
     }
     createSpeedtestServer(serverObj){
         var serverSQL={
